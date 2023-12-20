@@ -4,7 +4,7 @@ import pickle
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-import hydra
+# import hydra
 import yaml
 
 from ml import process_data, inference
