@@ -67,16 +67,7 @@ def train(config):
         label=config["data"]["label"], 
         training=True
     )
-    
-    X_test, y_test, encoder, lb = process_data(
-        test, 
-        categorical_features=config["data"]["cat_features"], 
-        label=config["data"]["label"], 
-        encoder=encoder, 
-        lb=lb,
-        training=False
-    )
-
+ 
     logger.info("Training decision tree model...")
     dt_model = train_model(X_train, y_train, **config["model"]["decision_tree"])
     
@@ -86,6 +77,15 @@ def train(config):
     with open(os.path.join(config["model"]["saved_model_path"]), "wb") as f:
         pickle.dump([encoder, lb, dt_model], f)
     
+       
+    X_test, y_test, encoder, lb = process_data(
+        test, 
+        categorical_features=config["data"]["cat_features"], 
+        label=config["data"]["label"], 
+        encoder=encoder, 
+        lb=lb,
+        training=False
+    )
     logger.info("Inferencing model...")
     y_preds = inference(model=dt_model, X=X_test)
     

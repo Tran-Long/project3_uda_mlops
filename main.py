@@ -33,19 +33,19 @@ class CensusInputData(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "age": 23,
-                    "workclass": "Self-emp-not-inc",
+                    "age": 38,
+                    "workclass": "Private",
                     "fnlgt": 8071,
                     "education": "HS-grad",
                     "education-num": 9,
                     "marital-status": "Married-civ-spouse",
                     "occupation": "Exec-managerial",
                     "relationship": "Husband",
-                    "race": "White",
+                    "race": "Black",
                     "sex": "Male",
                     "capital-gain": 0,
                     "capital-loss": 0,
-                    "hours-per-week": 45,
+                    "hours-per-week": 40,
                     "native-country": "United-States"
                 }
             ]
@@ -58,16 +58,13 @@ def welcome_root():
     return {"message": "Welcome to the Project 3 of the Udacity MLOps course!"}
 
 
-@app.post(path="/infer")
+@app.post(path="/predict")
 # @hydra.main(config_path=".", config_name="config", version_base="1.2")
 async def prediction(input_data: CensusInputData) -> Dict[str, str]:
     """
-    Example function for returning model output from POST request.
-    The function take in a single web form entry and converts it to a single
-    row of input data conforming to the constraints of the features used in the model.
+    API for get prediction from the model with data from POST request.
     Args:
-        input_data (BasicInputData) : Instance of a BasicInputData object. Collected data from
-        web form submission.
+        input_data (BasicInputData) : Instance of a BasicInputData object.
     Returns:
         dict: Dictionary containing the model output.
     """
@@ -76,7 +73,7 @@ async def prediction(input_data: CensusInputData) -> Dict[str, str]:
     [encoder, lb, model] = pickle.load(
         open(config["model"]["saved_model_path"], "rb"))
     input_df = pd.DataFrame(
-        {k: v for k, v in input_data.dict(by_alias=True).items()}, index=[0]
+        {k: v for k, v in input_data.model_dump(by_alias=True).items()}, index=[0]
     )
 
     processed_input_data, _, _, _ = process_data(
@@ -89,7 +86,7 @@ async def prediction(input_data: CensusInputData) -> Dict[str, str]:
     )
 
     prediction = inference(model, processed_input_data)
-    return {"Output": ">50K" if int(prediction[0]) == 1 else "<=50K"}
+    return {"Result": ">50K" if int(prediction[0]) == 1 else "<=50K"}
 
 
 if __name__ == "__main__":
