@@ -1,6 +1,6 @@
 # Build an ML Pipeline for Short-term Rental Prices in NYC
 
-[**Project Description**](#project-description) | [**Install**](#install) | [**Data**](#data) | [**Train model**](#train-model) | [**Run sanity checks**](#run-sanity-checks) | [**Run tests**](#run-tests) | [**CI/CD**](#cicd) | [**Dockerize**](#dockerize)  | [**Request API**](#request-api) | [**Model Card**](#model-card) | [**Code Quality**](#code-quality)
+[**Project Description**](#project-description) | [**Install**](#install) | [**Data**](#data) | [**Train model**](#train-model) | [**Run sanity checks**](#run-sanity-checks) | [**Run tests**](#run-tests) | [**CI/CD**](#cicd) | [**Live requests to Heroku server**](#Live-requests-to-Heroku-server) | [**Model Card**](#model-card) | [**Code Quality**](#code-quality)
 
 ## Project Description
 Apply the skills acquired in this course to develop a classification model on publicly available Census Bureau data and deploy trained model using the FastAPI package and create API tests. The slice validation and the API tests will be incorporated into a CI/CD framework using GitHub Actions.
