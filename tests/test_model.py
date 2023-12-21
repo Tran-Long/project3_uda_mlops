@@ -1,11 +1,11 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parents[1]))
 from ml import process_data, inference, compute_model_metrics
 import pickle
 import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
-import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).parents[1]))
 
 
 @pytest.fixture(scope="module")

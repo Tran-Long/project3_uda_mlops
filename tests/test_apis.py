@@ -1,10 +1,9 @@
-from main import app
 import sys
-import json
-import pytest
-from fastapi.testclient import TestClient
 from pathlib import Path
 sys.path.append(str(Path(__file__).parents[1]))
+from main import app
+import pytest
+from fastapi.testclient import TestClient
 
 
 @pytest.fixture(scope="session")
