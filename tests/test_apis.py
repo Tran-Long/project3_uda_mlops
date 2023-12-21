@@ -1,10 +1,10 @@
+from main import app
 import sys
 import json
 import pytest
 from fastapi.testclient import TestClient
 from pathlib import Path
 sys.path.append(str(Path(__file__).parents[1]))
-from main import app
 
 
 @pytest.fixture(scope="session")
@@ -17,7 +17,8 @@ def test_get(client):
     """Test get the root of the website"""
     res = client.get("/")
     assert res.status_code == 200
-    assert res.json() == {"message": "Welcome to the Project 3 of the Udacity MLOps course!"}
+    assert res.json() == {
+        "message": "Welcome to the Project 3 of the Udacity MLOps course!"}
 
 
 def test_post_below(client):

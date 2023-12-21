@@ -1,43 +1,154 @@
-Working in a command line environment is recommended for ease of use with git and dvc. If on Windows, WSL1 or 2 is recommended.
+# Build an ML Pipeline for Short-term Rental Prices in NYC
 
-# Environment Set up
-* Download and install conda if you don’t have it already.
-    * Use the supplied requirements file to create a new environment, or
-    * conda create -n [envname] "python=3.8" scikit-learn pandas numpy pytest jupyter jupyterlab fastapi uvicorn -c conda-forge
-    * Install git either through conda (“conda install git”) or through your CLI, e.g. sudo apt-get git.
+[**Project Description**](#project-description) | [**Install**](#install) | [**Data**](#data) | [**Train model**](#train-model) | [**Run sanity checks**](#run-sanity-checks) | [**Run tests**](#run-tests) | [**CI/CD**](#cicd) | [**Dockerize**](#dockerize)  | [**Request API**](#request-api) | [**Model Card**](#model-card) | [**Code Quality**](#code-quality)
 
-## Repositories
-* Create a directory for the project and initialize git.
-    * As you work on the code, continually commit changes. Trained models you want to use in production must be committed to GitHub.
-* Connect your local git repo to GitHub.
-* Setup GitHub Actions on your repo. You can use one of the pre-made GitHub Actions if at a minimum it runs pytest and flake8 on push and requires both to pass without error.
-    * Make sure you set up the GitHub Action to have the same version of Python as you used in development.
+## Project Description
+Apply the skills acquired in this course to develop a classification model on publicly available Census Bureau data and deploy trained model using the FastAPI package and create API tests. The slice validation and the API tests will be incorporated into a CI/CD framework using GitHub Actions.
 
-# Data
-* Download census.csv and commit it to dvc.
-* This data is messy, try to open it in pandas and see what you get.
-* To clean it, use your favorite text editor to remove all spaces.
+Source code: [Tran-Long/deploy_ml_pipeline_in_production](https://github.com/Tran-Long/project3_uda_mlops)
 
-# Model
-* Using the starter code, write a machine learning model that trains on the clean data and saves the model. Complete any function that has been started.
-* Write unit tests for at least 3 functions in the model code.
-* Write a function that outputs the performance of the model on slices of the data.
-    * Suggestion: for simplicity, the function can just output the performance on slices of just the categorical features.
-* Write a model card using the provided template.
+**Working directory tree**
 
-# API Creation
-*  Create a RESTful API using FastAPI this must implement:
-    * GET on the root giving a welcome message.
-    * POST that does model inference.
-    * Type hinting must be used.
-    * Use a Pydantic model to ingest the body from POST. This model should contain an example.
-   	 * Hint: the data has names with hyphens and Python does not allow those as variable names. Do not modify the column names in the csv and instead use the functionality of FastAPI/Pydantic/etc to deal with this.
-* Write 3 unit tests to test the API (one for the GET and two for POST, one that tests each prediction).
+```bash
+.
+├── INSTRUCTIONS.md
+├── Procfile
+├── README.md
+├── config.yaml
+├── data
+│   └── census.csv
+├── infer.py
+├── logs
+│   ├── infer_log.txt
+│   └── train_log.txt
+├── main.py
+├── ml
+│   ├── __init__.py
+│   ├── data.py
+│   └── model.py
+├── model
+│   └── dt.pkl
+├── model_card.md
+├── requirements.txt
+├── results
+│   └── slice_output.txt
+├── sanitycheck.py
+├── screenshots
+│   ├── continuous_deployment.png
+│   ├── continuous_integration.png
+│   ├── example.png
+│   ├── live_get.png
+│   └── live_post.png
+├── setup.py
+├── tests
+│   ├── test_apis.py
+│   └── test_model.py
+└── train_model.py
 
-# API Deployment
-* Create a free Heroku account (for the next steps you can either use the web GUI or download the Heroku CLI).
-* Create a new app and have it deployed from your GitHub repository.
-    * Enable automatic deployments that only deploy if your continuous integration passes.
-    * Hint: think about how paths will differ in your local environment vs. on Heroku.
-    * Hint: development in Python is fast! But how fast you can iterate slows down if you rely on your CI/CD to fail before fixing an issue. I like to run flake8 locally before I commit changes.
-* Write a script that uses the requests module to do one POST on your live API.
+7 directories, 26 files
+```
+| # | Feature               | Stack             |
+|:-:|-----------------------|:-----------------:|
+| 0 | Language              | Python            |
+| 1 | Clean code principles | Autopep8, Pylint  |
+| 2 | Testing               | Pytest            |
+| 3 | Logging               | Logging           |
+| 4 | Development API       | FastAPI           |
+| 5 | Cloud computing       | Heroku            |
+| 6 | CI/CD                 | Github Actions    |
+
+
+## Install
+```bash
+pip install -r requirements.txt
+```
+
+## Data
+### 1. Download data
+```bash
+data/census.csv
+```
+Link: https://archive.ics.uci.edu/ml/datasets/census+income
+
+The data has been cleaned up with VSCode editor (removing spaces)
+
+## Train model
+```bash
+python train.py
+```
+Result *"./logs/train_log.txt"*
+```
+2023-12-22 00:50:55,801 - INFO - Loading data from data/census.csv
+2023-12-22 00:50:55,855 - INFO - Splitting data into train/test with test ration: 0.2
+2023-12-22 00:50:55,941 - INFO - Training decision tree model...
+2023-12-22 00:50:56,095 - INFO - Training decision tree model DONE
+2023-12-22 00:50:56,095 - INFO - Save [encoder, lb, dt_model] to ./model/dt.pkl
+2023-12-22 00:50:56,108 - INFO - Inferencing model...
+2023-12-22 00:50:56,117 - INFO - >>>Precision: 0.7199055861526357
+2023-12-22 00:50:56,117 - INFO - >>>Recall: 0.5783817951959545
+2023-12-22 00:50:56,117 - INFO - >>>Fbeta: 0.6414300736067297
+2023-12-22 00:50:56,117 - INFO - Calculating metrics on slices of categorical features in data
+2023-12-22 00:50:56,632 - INFO - Storing cat-slices results to ./results/slice_output.txt
+
+```
+
+## Run sanity checks
+```bash
+python sanity_checks.py
+```
+Result
+```
+============= Sanity Check Report ===========
+Your test cases look good!
+This is a heuristic based sanity testing and cannot guarantee the correctness of your code.
+You should still check your work against the rubric to ensure you meet the criteria.
+```
+
+## Run tests
+```bash
+pytest tests/
+```
+Result
+```
+===================================================== test session starts ======================================================
+platform linux -- Python 3.10.13, pytest-7.4.3, pluggy-1.3.0
+rootdir: /home/parzival/Projects/project3_uda_mlops
+plugins: anyio-3.7.1
+collected 8 items                                                                                                              
+
+tests/test_apis.py ....                                                                                                  [ 50%]
+tests/test_model.py ....                                                                                                 [100%]
+
+====================================================== 8 passed in 1.23s =======================================================
+```
+
+## CI/CD
+### 1. CI with Github Actions
+![github_acontinuous_integrationctions](screenshots/continuous_integration.png)
+
+### 2. CD with Heroku
+![settings_continuous_deployment](screenshots/continuous_deployment.png)
+
+
+
+## Live requests to Heroku server
+
+![live_get](screenshots/live_get.png)
+
+Script to request API method POST on predictions
+```bash
+python infer.py
+```
+![live_post](screenshots/live_post.png)
+
+
+## Model Card
+Details in **./model_card.md**
+
+## Code Quality
+Style Guide - Refactored code using PEP 8 – Style Guide. 
+```bash
+autopep8 --in-place --aggressive --aggressive .
+```
+
+Docstring - All functions and files should have document strings that correctly identifies the inputs, outputs, and purpose of the function. All files have a document string that identifies the purpose of the file, the author, and the date the file was created.

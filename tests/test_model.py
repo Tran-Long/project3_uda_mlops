@@ -1,3 +1,4 @@
+from ml import process_data, inference, compute_model_metrics
 import pickle
 import pandas as pd
 import pytest
@@ -5,11 +6,12 @@ from sklearn.model_selection import train_test_split
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parents[1]))
-from ml import process_data, inference, compute_model_metrics
+
 
 @pytest.fixture(scope="module")
 def data():
     return pd.read_csv("data/census.csv")
+
 
 cat_features = [
     "workclass",
@@ -22,30 +24,36 @@ cat_features = [
     "native-country"
 ]
 
+
 def test_data_column_names(data):
+    """Assert that enough columns are in data"""
     expected_columns = sorted([
-        'age', 
-        'workclass', 
-        'fnlgt', 
-        'education', 
-        'education-num', 
-        'marital-status', 
-        'occupation', 
-        'relationship', 
-        'race', 
-        'sex', 
-        'capital-gain', 
-        'capital-loss', 
-        'hours-per-week', 
+        'age',
+        'workclass',
+        'fnlgt',
+        'education',
+        'education-num',
+        'marital-status',
+        'occupation',
+        'relationship',
+        'race',
+        'sex',
+        'capital-gain',
+        'capital-loss',
+        'hours-per-week',
         'native-country',
         'salary'
     ])
     exist_colums = sorted(list(data.columns))
     assert expected_columns == exist_colums
 
+
 def test_data_nan(data):
+    """Assert that data has no nan values"""
     for col_name in data.columns:
-        assert not data[col_name].isnull().any(), f"Column {col_name} has null values"
+        assert not data[col_name].isnull().any(
+        ), f"Column {col_name} has null values"
+
 
 def test_inference(data):
     """
@@ -67,6 +75,7 @@ def test_inference(data):
     preds = inference(dt_model, X_test)
 
     assert len(preds) == len(X_test)
+
 
 def test_model_metrics(data):
     """

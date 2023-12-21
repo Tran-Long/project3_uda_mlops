@@ -21,4 +21,4 @@ model:
     random_state: 37
   
 slices:
-  cat_slices_result_path: ./results/cat_slices.csv
+  cat_slices_result_path: ./results/slice_output.txt

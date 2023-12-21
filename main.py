@@ -58,6 +58,11 @@ def welcome_root():
     return {"message": "Welcome to the Project 3 of the Udacity MLOps course!"}
 
 
+@app.get(path="/new")
+def new():
+    return {"message": "Testing CI/CD successfully!"}
+
+
 @app.post(path="/predict")
 # @hydra.main(config_path=".", config_name="config", version_base="1.2")
 async def prediction(input_data: CensusInputData) -> Dict[str, str]:
